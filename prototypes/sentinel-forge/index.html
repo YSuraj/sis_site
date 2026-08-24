@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Local AI Security Investigation Workbench prototype" />
+  <title>Sentinel Forge · Investigation Workbench</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="ambient ambient-one"></div><div class="ambient ambient-two"></div>
+  <header class="topbar">
+    <a class="brand" href="#"><span class="brand-mark">SF</span><span><strong>Sentinel Forge</strong><small>AI Security Investigation Workbench</small></span></a>
+    <div class="top-actions"><span class="status"><i></i> Local analysis engine</span><button class="icon-btn" id="themeBtn" aria-label="Toggle theme">◐</button></div>
+  </header>
+
+  <main class="shell">
+    <section class="hero">
+      <div><span class="eyebrow">INVESTIGATION  /  NEW CASE</span><h1>Turn security evidence into a defensible incident story.</h1><p>Normalize logs, correlate activity, map ATT&amp;CK techniques, and determine the next best action—entirely in your browser.</p></div>
+      <div class="hero-stat"><span id="clock">00:00:00</span><small>ANALYST CLOCK · LOCAL</small></div>
+    </section>
+
+    <section class="scenario-strip" aria-label="Sample scenarios">
+      <div class="section-label"><span>Quick start</span><small>Load a simulated incident</small></div>
+      <div class="scenario-list" id="scenarioList"></div>
+    </section>
+
+    <section class="workspace-grid">
+      <article class="panel evidence-panel">
+        <div class="panel-head"><div><span class="kicker">01 · INGEST</span><h2>Security Evidence</h2></div><span class="privacy">◉ Data stays local</span></div>
+        <div class="dropzone" id="dropzone">
+          <input type="file" id="fileInput" accept=".csv,.json,.log,.txt,application/json,text/csv,text/plain" hidden />
+          <div class="drop-icon">⇧</div><strong>Drop evidence here</strong><span>CSV, JSON, LOG, or TXT · up to 5 MB</span>
+          <button class="secondary" id="browseBtn">Choose file</button>
+        </div>
+        <div class="divider"><span>or paste raw events</span></div>
+        <textarea id="evidenceInput" spellcheck="false" placeholder="2026-08-13T09:41:22Z user=j.santos src_ip=185.220.101.44 host=FIN-WS22 action=login_failed"></textarea>
+        <div class="input-meta"><span id="formatHint">Format: auto-detect</span><span id="lineCount">0 lines</span></div>
+        <button class="primary" id="analyzeBtn"><span>Analyze evidence</span><b>→</b></button>
+      </article>
+
+      <article class="panel summary-panel" id="summaryPanel">
+        <div class="panel-head"><div><span class="kicker">02 · ASSESS</span><h2>Analysis Summary</h2></div><span class="case-id" id="caseId">CASE—PENDING</span></div>
+        <div class="empty-state" id="emptySummary"><div class="radar"><i></i><i></i><i></i></div><h3>Awaiting evidence</h3><p>Load a scenario or provide logs to begin deterministic correlation.</p></div>
+        <div class="summary-content hidden" id="summaryContent">
+          <div class="risk-row"><div class="risk-orb" id="riskOrb"><strong id="riskScore">0</strong><span>RISK</span></div><div><span class="severity" id="severity">UNKNOWN</span><h3 id="incidentTitle">Security activity detected</h3><p id="summaryText"></p></div></div>
+          <div class="metric-grid"><div><span>CONFIDENCE</span><strong id="confidence">0%</strong></div><div><span>EVENTS</span><strong id="eventCount">0</strong></div><div><span>ENTITIES</span><strong id="entityCount">0</strong></div><div><span>SPAN</span><strong id="timeSpan">—</strong></div></div>
+          <div class="finding"><span>KEY FINDING</span><p id="keyFinding"></p></div>
+        </div>
+      </article>
+    </section>
+
+    <section class="results hidden" id="results">
+      <nav class="tabs" id="tabs"><button class="active" data-tab="timeline">Timeline <span id="timelineBadge">0</span></button><button data-tab="graph">Attack Graph</button><button data-tab="indicators">Indicators</button><button data-tab="mitre">MITRE ATT&amp;CK</button><button data-tab="response">Response</button></nav>
+      <div class="tab-panel active" id="timeline"><div class="section-title"><div><span class="kicker">CORRELATED ACTIVITY</span><h2>Investigation Timeline</h2></div><button class="secondary compact" id="exportBtn">Export report ↓</button></div><div class="timeline" id="timelineList"></div></div>
+      <div class="tab-panel" id="graph"><div class="section-title"><div><span class="kicker">RELATIONSHIP MAP</span><h2>Attack Graph</h2></div><div class="legend"><span><i class="u"></i>User</span><span><i class="e"></i>Endpoint</span><span><i class="p"></i>Process</span><span><i class="x"></i>IOC</span></div></div><div class="graph-wrap"><svg id="attackGraph" viewBox="0 0 900 430" role="img" aria-label="Attack relationship graph"></svg></div></div>
+      <div class="tab-panel" id="indicators"><div class="section-title"><div><span class="kicker">EXTRACTED ENTITIES</span><h2>Indicators &amp; Assets</h2></div></div><div class="ioc-grid" id="iocGrid"></div></div>
+      <div class="tab-panel" id="mitre"><div class="section-title"><div><span class="kicker">BEHAVIOR MAPPING</span><h2>MITRE ATT&amp;CK Techniques</h2></div></div><div class="mitre-grid" id="mitreGrid"></div></div>
+      <div class="tab-panel" id="response"><div class="section-title"><div><span class="kicker">PRIORITIZED ACTIONS</span><h2>Containment &amp; Recommendations</h2></div></div><div class="response-grid" id="responseGrid"></div></div>
+    </section>
+
+    <section class="analyst panel">
+      <div class="analyst-head"><div class="analyst-avatar">AI</div><div><span class="kicker">LOCAL RULE-BASED ASSISTANT</span><h2>Ask the AI Analyst</h2></div><span class="status"><i></i> Ready</span></div>
+      <div class="chat" id="chat"><div class="message bot"><span>AI</span><p>Load evidence, then ask me what happened, which assets are affected, why the incident is severe, or what to contain first.</p></div></div>
+      <div class="suggestions" id="suggestions"><button>What happened?</button><button>Which assets are affected?</button><button>What should I contain first?</button><button>Why is this suspicious?</button></div>
+      <form class="askbar" id="askForm"><input id="questionInput" placeholder="Ask about the investigation…" autocomplete="off" /><button aria-label="Send">↑</button></form>
+    </section>
+  </main>
+  <footer><span>Sentinel Forge Prototype</span><span>Deterministic analysis · No data leaves this device</span></footer>
+  <div class="toast" id="toast"></div>
+  <script src="app.js"></script>
+</body>
+</html>

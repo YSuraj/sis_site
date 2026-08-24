@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="description" content="NetScope public IP assessment prototype">
+  <title>NetScope — Network Intelligence</title>
+  <link rel="stylesheet" href="./styles.css">
+</head>
+<body>
+  <main class="app-shell">
+    <aside class="sidebar">
+      <div class="brand"><span class="brand-mark">↯</span><span>NetScope</span></div>
+      <nav aria-label="Primary navigation">
+        <button data-target="overview"><span>◫</span> Overview</button>
+        <button class="active" data-target="network-map"><span>⌘</span> Network Map</button>
+        <button data-target="activity"><span>!</span> Alerts <span class="nav-count">4</span></button>
+        <button data-action="focus-search"><span>◇</span> Assets</button>
+        <button data-action="report"><span>▤</span> Reports</button>
+      </nav>
+      <div class="workspace"><span class="workspace-avatar">AC</span><div><strong>Acme Corp.</strong><small>GitHub Pages demo</small></div></div>
+    </aside>
+
+    <section class="content">
+      <header class="topbar">
+        <div class="search"><span>⌕</span><input id="asset-search" aria-label="Search assets" placeholder="Search IP, hostname, or service..."><kbd>⌘ K</kbd></div>
+        <div class="top-actions"><span class="live"><i></i> Demo</span><button aria-label="Notifications" data-target="activity">♢<b>4</b></button><button class="avatar" aria-label="Profile">SK</button></div>
+      </header>
+
+      <div class="workspace-main" id="top">
+        <section class="page-head">
+          <div><p class="eyebrow">PUBLIC ATTACK SURFACE</p><h1>Public IP scanner</h1><p>Assess one manually entered public IPv4 address at a time.</p></div>
+          <div class="head-actions"><button class="scan-button" id="open-scan">⌖ Scan public IP</button></div>
+        </section>
+        <div class="gh-notice">GitHub Pages hosts this interactive frontend only. Results are simulated until you connect a separately hosted, protected NetScope scanner API.</div>
+        <section class="target-strip" aria-live="polite"><span class="target-icon">◎</span><div><strong id="target-ip">No public IP selected</strong><small id="target-copy">Enter one authorized public IPv4 address to begin</small></div><span class="target-state" id="target-state">AWAITING INPUT</span></section>
+
+        <section class="stats-grid" id="overview" aria-label="Assessment summary">
+          <article><span class="stat-icon blue">◇</span><div><p>Target type</p><strong>IPv4</strong><small>Single target only</small></div></article>
+          <article><span class="stat-icon green">↯</span><div><p>Ports checked</p><strong id="ports-checked">0</strong><small>Conservative allowlist</small></div></article>
+          <article><span class="stat-icon amber">!</span><div><p>Open services</p><strong id="open-count">0</strong><small>Prototype result</small></div></article>
+          <article><span class="stat-icon violet">◆</span><div><p>Risk status</p><strong id="risk-status">—</strong><small>Informational only</small></div></article>
+        </section>
+
+        <section class="analysis-grid" id="network-map">
+          <article class="panel map-panel">
+            <div class="panel-head"><div><h2>Target topology</h2><span id="map-subtitle">Awaiting a public IP</span></div><div class="segmented"><button class="on" data-view="risk">Risk</button><button data-view="traffic">Traffic</button></div></div>
+            <div class="network-canvas risk" id="network-canvas">
+              <div class="map-layer" id="map-layer"><div class="map-grid"></div><div class="map-placeholder" id="nodes"></div></div>
+              <div class="legend"><span><i class="dot healthy"></i> Reachable</span><span><i class="dot warning"></i> Review</span><span><i class="dot critical"></i> Critical</span></div>
+              <div class="map-controls"><button aria-label="Zoom in" data-zoom="in">+</button><button aria-label="Zoom out" data-zoom="out">−</button><button aria-label="Fit map" data-zoom="fit">⌗</button></div>
+            </div>
+          </article>
+          <aside class="panel inspector">
+            <div class="inspector-top"><div class="asset-badge warning">IP</div><div><span class="status warning" id="inspect-status">WAITING</span><h2 id="inspect-title">Public target</h2><p id="inspect-ip">No address</p></div></div>
+            <div class="risk-block"><div><span>Risk score</span><strong id="risk-score">—<small>/100</small></strong></div><div class="risk-meter"><i id="risk-meter" style="width:0"></i></div><p>Prototype results require analyst verification</p></div>
+            <div class="detail-list"><div><span>Input mode</span><strong>Manual only</strong></div><div><span>Scope</span><strong>Single IPv4</strong></div><div><span>Live traffic</span><strong id="live-traffic">Disabled</strong></div><div><span>Backend</span><strong>Not connected</strong></div></div>
+            <div class="finding"><div><span class="finding-icon">!</span><div><strong>Demo safety boundary</strong><p>This GitHub Pages version never sends network scan traffic from the browser.</p></div></div></div>
+          </aside>
+        </section>
+
+        <section class="panel scan-results" id="activity"><div class="panel-head"><div><h2>Assessment results</h2><span>Simulated common-port connection checks</span></div></div><div id="results" class="result-empty">Run a prototype scan to see results.</div></section>
+      </div>
+    </section>
+
+    <div class="modal-backdrop" id="scan-modal" hidden>
+      <section class="scan-modal" role="dialog" aria-modal="true" aria-labelledby="scan-title">
+        <button class="modal-close" id="close-scan" aria-label="Close">×</button><span class="modal-mark">⌖</span><p class="eyebrow">PUBLIC ATTACK SURFACE</p><h2 id="scan-title">Scan one public IP</h2><p>Enter a single routable IPv4 address. Ranges, hostnames, private addresses, and multiple targets are blocked.</p>
+        <form id="scan-form"><label for="scan-ip">Public IPv4 address</label><input id="scan-ip" inputmode="decimal" autocomplete="off" spellcheck="false" placeholder="e.g. 8.8.8.8" aria-describedby="scan-help scan-error"><small id="scan-help">This GitHub prototype simulates results and sends no live scan traffic.</small><label class="authorization"><input id="authorized" type="checkbox"><span>I own this IP or have explicit authorization to assess it.</span></label><div class="scan-error" id="scan-error" role="alert" hidden></div><div class="modal-actions"><button type="button" id="cancel-scan">Cancel</button><button type="submit">Run prototype scan →</button></div></form>
+      </section>
+    </div>
+    <div class="toast" id="toast" role="status" hidden><span>✓</span><span id="toast-copy"></span></div>
+  </main>
+  <script src="./app.js" defer></script>
+</body>
+</html>
